@@ -86,6 +86,8 @@
 #define NETSTACK_MAC     tschmac_driver
 #elif MAC_CONF_WITH_BLE
 #define NETSTACK_MAC   ble_l2cap_driver
+#elif MAC_CONF_WITH_NULLMAC_SKY
+#define NETSTACK_MAC   nullmac_sky_driver
 #else
 #error Unknown MAC configuration
 #endif
