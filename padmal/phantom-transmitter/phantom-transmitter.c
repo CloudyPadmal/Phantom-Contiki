@@ -32,12 +32,14 @@ PROCESS_THREAD(phantom_node, ev, data) {
   PROCESS_BEGIN();
 
   /* Initialize NullNet */
-  nullnet_buf = (uint8_t * ) & message;
+  nullnet_buf = (uint8_t *) &message;
   nullnet_len = sizeof(message);
 
   etimer_set(&periodic_timer, SEND_INTERVAL);
 
-  NETSTACK_CONF_RADIO.set_value(RADIO_PARAM_TXPOWER, 5);
+  // POWER = {-25, -15, -10, -7, -5, -3, -1, 0}
+  // Reference: arch/dev/radio/cc2420/cc2420.c (L.83) & (L.284)
+  NETSTACK_CONF_RADIO.set_value(RADIO_PARAM_TXPOWER, 0);
   NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
 
   /*
@@ -62,8 +64,7 @@ PROCESS_THREAD(phantom_node, ev, data) {
         memcpy(nullnet_buf,&count, sizeof(count));
         nullnet_len = sizeof(count);
 
-        NETSTACK_NETWORK.
-        output(NULL);
+        NETSTACK_NETWORK.output(NULL);
         count++;
 
         leds_toggle(LEDS_YELLOW);
