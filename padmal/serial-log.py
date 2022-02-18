@@ -4,7 +4,16 @@ import serial as s
 import sys
 import signal
 
-ser = s.Serial(sys.argv[2], baudrate=115200)
+if len(sys.argv) is not 3:
+    print("Port and Log missing")
+    exit()
+
+ser = None
+try:
+    ser = s.Serial(sys.argv[2], baudrate=115200)
+except s.SerialException as e:
+    print("\033[91mOperation failed for\033[1m", (sys.argv[1]).split("/")[2], "\033[0m")
+    exit()
 file = open(sys.argv[2], 'w')
 
 
