@@ -25,6 +25,7 @@ PROCESS_THREAD(phantom_node, ev, data) {
   static struct etimer periodic_timer;
 
   int power;
+  int channel;
 
   static char message[3];
   static unsigned count = 0;
@@ -37,10 +38,9 @@ PROCESS_THREAD(phantom_node, ev, data) {
 
   etimer_set(&periodic_timer, SEND_INTERVAL);
 
-  // POWER = {-25, -15, -10, -7, -5, -3, -1, 0}
   // Reference: arch/dev/radio/cc2420/cc2420.c (L.83) & (L.284)
-  NETSTACK_CONF_RADIO.set_value(RADIO_PARAM_TXPOWER, 0);
-  NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
+  static int POWER[] = {-25, -15, -10, -7, -5, -3, -1, 0};
+  static int power_pos = 7;
 
   /*
   |     2     |  1  |   2   |   8   |   2   |   8   |  21   |   VAR   |  2  |
@@ -54,14 +54,43 @@ PROCESS_THREAD(phantom_node, ev, data) {
       char CH = *(char *) data;
       if (CH == '\0') {
         LOG_INFO("Packet count reset\n");
+        NETSTACK_CONF_RADIO.set_value(RADIO_PARAM_TXPOWER, POWER[power_pos]);
+        NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
         LOG_INFO("TX Power is set to %d dBm\n", power);
         count = 0;
         leds_off(LEDS_ALL);
+        leds_off(LEDS_RED);
+      } else if (CH == 'w') {
+        power_pos++;
+        if (power_pos == 8) {
+          power_pos = 7;
+        }
+        NETSTACK_CONF_RADIO.set_value(RADIO_PARAM_TXPOWER, POWER[power_pos]);
+        NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
+        LOG_INFO("TX Power is increased to %d dBm\n", power);
+      } else if (CH == 's') {
+        power_pos--;
+        if (power_pos == -1) {
+          power_pos = 0;
+        }
+        NETSTACK_CONF_RADIO.set_value(RADIO_PARAM_TXPOWER, POWER[power_pos]);
+        NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
+        LOG_INFO("TX Power is decreased to %d dBm\n", power);
+      } else if (CH == 'a') {
+        NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
+        NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_CHANNEL, &channel);
+        LOG_INFO("TX Power is %d dBm\n", power);
+        LOG_INFO("Channel is %d\n", channel);
+      } else {
+        LOG_INFO("Invalid command.\n");
+        LOG_INFO("w: increase power\n");
+        LOG_INFO("s: decrease power\n");
+        LOG_INFO("a: query channel and power\n");
       }
     }
     else if (ev == PROCESS_EVENT_TIMER) {
       if (count < MESSAGE_COUNT) {
-        memcpy(nullnet_buf,&count, sizeof(count));
+        memcpy(nullnet_buf, &count, sizeof(count));
         nullnet_len = sizeof(count);
 
         NETSTACK_NETWORK.output(NULL);
