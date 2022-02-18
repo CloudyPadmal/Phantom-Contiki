@@ -20,7 +20,7 @@ file = open(sys.argv[2], 'w')
 def handler(signum, frame):
     ser.close()
     file.close()
-    print(os.getpid(), "stopped and cleaned!")
+    print('\033[94m', os.getpid(), "\033[0mstopped and cleaned!")
     exit()
 
 
