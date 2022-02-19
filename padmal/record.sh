@@ -19,4 +19,5 @@ python3 serial-log.py "$NODE_RX" Log/Receive.txt &
 python3 serial-log.py "$NODE_E1" Log/Eaves-1.txt &
 python3 serial-log.py "$NODE_E2" Log/Eaves-2.txt &
 python3 serial-log.py "$NODE_E3" Log/Eaves-3.txt &
-python3 serial-log.py "$NODE_E4" Log/Eaves-4.txt
+python3 serial-log.py "$NODE_E4" Log/Eaves-4.txt &
+python3 serial-log.py "$NODE_TX"
