@@ -10,7 +10,7 @@
 
 #include "sys/log.h"
 
-#define LOG_MODULE "Phantm Tx"
+#define LOG_MODULE "Phantom Tx"
 #define LOG_LEVEL LOG_LEVEL_INFO
 
 /* Configuration */
@@ -52,40 +52,56 @@ PROCESS_THREAD(phantom_node, ev, data) {
 
     if (ev == serial_line_event_message) {
       char CH = *(char *) data;
-      if (CH == '\0') {
-        LOG_INFO("Packet count reset\n");
-        NETSTACK_CONF_RADIO.set_value(RADIO_PARAM_TXPOWER, POWER[power_pos]);
-        NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
-        LOG_INFO("TX Power is set to %d dBm\n", power);
-        count = 0;
-        leds_off(LEDS_ALL);
-        leds_off(LEDS_RED);
-      } else if (CH == 'w') {
-        power_pos++;
-        if (power_pos == 8) {
+      switch (CH) {
+        case '\0': // Log status
+          NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
+          NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_CHANNEL, &channel);
+          LOG_INFO("TX Power is %d dBm\n", power);
+          LOG_INFO("Channel is %d\n", channel);
+          break;
+        case 'r': // Packet counter reset
+          LOG_INFO("Packet count reset\n");
+          NETSTACK_CONF_RADIO.set_value(RADIO_PARAM_TXPOWER, POWER[power_pos]);
+          NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
+          LOG_INFO("TX Power is at %d dBm\n", power);
+          count = 0;
+          leds_off(LEDS_ALL); leds_off(LEDS_RED);
+          break;
+        case 'R': // Full reset
+          LOG_INFO("Full reset; max power\n");
           power_pos = 7;
-        }
-        NETSTACK_CONF_RADIO.set_value(RADIO_PARAM_TXPOWER, POWER[power_pos]);
-        NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
-        LOG_INFO("TX Power is increased to %d dBm\n", power);
-      } else if (CH == 's') {
-        power_pos--;
-        if (power_pos == -1) {
-          power_pos = 0;
-        }
-        NETSTACK_CONF_RADIO.set_value(RADIO_PARAM_TXPOWER, POWER[power_pos]);
-        NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
-        LOG_INFO("TX Power is decreased to %d dBm\n", power);
-      } else if (CH == 'a') {
-        NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
-        NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_CHANNEL, &channel);
-        LOG_INFO("TX Power is %d dBm\n", power);
-        LOG_INFO("Channel is %d\n", channel);
-      } else {
-        LOG_INFO("Invalid command.\n");
-        LOG_INFO("w: increase power\n");
-        LOG_INFO("s: decrease power\n");
-        LOG_INFO("a: query channel and power\n");
+          NETSTACK_CONF_RADIO.set_value(RADIO_PARAM_TXPOWER, POWER[7]);
+          NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
+          LOG_INFO("TX Power is reset to %d dBm\n", power);
+          count = 0;
+          leds_off(LEDS_ALL); leds_off(LEDS_RED);
+          break;
+        case 'w': // Increase power
+          power_pos++;
+          if (power_pos == 8) {
+            power_pos = 7;
+          }
+          NETSTACK_CONF_RADIO.set_value(RADIO_PARAM_TXPOWER, POWER[power_pos]);
+          NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
+          LOG_INFO("TX Power is increased to %d dBm\n", power);
+          break;
+        case 's': // Decrease power
+          power_pos--;
+          if (power_pos == -1) {
+            power_pos = 0;
+          }
+          NETSTACK_CONF_RADIO.set_value(RADIO_PARAM_TXPOWER, POWER[power_pos]);
+          NETSTACK_CONF_RADIO.get_value(RADIO_PARAM_TXPOWER, &power);
+          LOG_INFO("TX Power is decreased to %d dBm\n", power);
+          break;
+        default:
+          LOG_INFO("Invalid command.\n");
+          LOG_INFO("w: increase power\n");
+          LOG_INFO("s: decrease power\n");
+          LOG_INFO("\\n: query channel and power\n");
+          LOG_INFO("r: reset packet counter\n");
+          LOG_INFO("R: full reset\n");
+          break;
       }
     }
     else if (ev == PROCESS_EVENT_TIMER) {
@@ -111,7 +127,5 @@ PROCESS_THREAD(phantom_node, ev, data) {
     etimer_reset(&periodic_timer);
     }
   }
-
   PROCESS_END();
-
 }

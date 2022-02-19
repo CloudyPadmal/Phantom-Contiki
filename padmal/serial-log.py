@@ -10,9 +10,9 @@ if len(sys.argv) is not 3:
 
 ser = None
 try:
-    ser = s.Serial(sys.argv[2], baudrate=115200)
+    ser = s.Serial(sys.argv[1], baudrate=115200)
 except s.SerialException as e:
-    print("\033[91mOperation failed for\033[1m", (sys.argv[1]).split("/")[2], "\033[0m")
+    print("\033[91mOperation failed for\033[1m", (sys.argv[1]).split("/")[1], "\033[0m")
     exit()
 file = open(sys.argv[2], 'w')
 
@@ -25,7 +25,12 @@ def handler(signum, frame):
 
 
 signal.signal(signal.SIGABRT, handler)
-ser.write(b'\n')
+# ser.write(b's\n')
+# ser.write(b'r\n')
+# ser.write(b'w\n')
+# ser.write(b'\n')
+ser.write(b'R\n')
+
 count = 0
 
 while True:
