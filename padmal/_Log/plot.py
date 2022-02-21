@@ -154,4 +154,9 @@ fr5.grid(True, axis='y', alpha=0.35)
 
 plt.savefig('results.png', dpi=300)
 
+NOTES = input("Notes: ")
+Notes_File = open("Notes.txt", 'a')
+Notes_File.write(NOTES)
+Notes_File.close()
+
 plt.show()
