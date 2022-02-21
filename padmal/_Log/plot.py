@@ -3,9 +3,10 @@ import numpy as np
 
 plt.rcParams["figure.figsize"] = (20, 8)
 
-POWER_L = 0
-RATE_P = 50
-PACKETS = 2500
+POWER_L = int(input("POWER: ") or "0")
+RATE_P = int(input("RATE: ") or "50")
+PACKETS = int(input("PACKETS: ") or "2500")
+
 MIN_RSSI = -100
 MAX_RSSI = -10
 BINS = [i * (PACKETS / 10) for i in range(11)]
