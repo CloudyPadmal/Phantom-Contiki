@@ -9,7 +9,7 @@
 #include "dev/leds.h"
 
 #include "sys/log.h"
-#define LOG_MODULE "Eaves"
+#define LOG_MODULE "Eavesdrop"
 #define LOG_LEVEL LOG_LEVEL_INFO
 
 /* Configuration */

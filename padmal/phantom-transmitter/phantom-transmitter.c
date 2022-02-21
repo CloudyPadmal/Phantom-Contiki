@@ -14,8 +14,8 @@
 #define LOG_LEVEL LOG_LEVEL_INFO
 
 /* Configuration */
-#define SEND_INTERVAL (CLOCK_SECOND * 0.1)
-#define MESSAGE_COUNT 500
+#define SEND_INTERVAL (CLOCK_SECOND * 0.05)
+#define MESSAGE_COUNT 2500
 
 PROCESS(phantom_node, "Phantom Tx");
 AUTOSTART_PROCESSES(&phantom_node);

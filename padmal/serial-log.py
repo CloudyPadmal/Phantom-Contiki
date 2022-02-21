@@ -43,7 +43,7 @@ attempted = False
 
 while True:
     try:
-        if Receiver:
+        if mode == Receiver:
             line = ser.readline()
             if line:
                 L = line.decode('utf-8', errors='ignore')

@@ -9,7 +9,7 @@
 #include "dev/leds.h"
 
 #include "sys/log.h"
-#define LOG_MODULE "Phantm Rx"
+#define LOG_MODULE "Phantom Rx"
 #define LOG_LEVEL LOG_LEVEL_INFO
 
 /* Configuration */
