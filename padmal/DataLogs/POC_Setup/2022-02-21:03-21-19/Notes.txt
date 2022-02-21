@@ -1,0 +1,1 @@
+Setup is very prone to surrounding. If I moved a bit, LEDs wouldn't blink indicating packets are not receiving.

@@ -1,0 +1,3 @@
+Here we are using 6 dBi antennas for eavesdroppers and new 2.4G antennas for both the receiver and transmitter.
+
+Looks like the new antennas do not have much gain compared to old small antennas.

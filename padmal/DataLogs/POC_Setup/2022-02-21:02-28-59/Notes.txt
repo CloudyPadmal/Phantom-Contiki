@@ -1,0 +1,4 @@
+Here also we are using 6 dBi antennas for eavesdroppers and new 2.4G antennas for both the receiver and transmitter.
+
+For some reason, the last few packets are dropped from the whole system. Transmitter had its LEDs blinked indicating
+packet transmission though.
